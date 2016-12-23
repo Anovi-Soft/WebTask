@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Microsoft.AspNet.Identity;
 using WebTask.Controllers.Access;
+using WebTask.Controllers.Format;
 using WebTask.Controllers.Provider;
 using WebTask.Models;
 
@@ -13,8 +16,11 @@ namespace WebTask.Controllers
         private readonly CommentsAccess commentsAccess = new CommentsAccess();
         private readonly LikeAccess likeAccess = new LikeAccess();
         private readonly XmlProvider xmlProvider = new XmlProvider();
+        private readonly HtmlMessageFormat htmlMessageFormat = new HtmlMessageFormat();
         private const int ImageCount = 18;
-        private Guid AuthorId => Guid.Parse(User.Identity.GetUserId());
+        private Guid AuthorId => User.Identity.IsAuthenticated
+            ? Guid.Parse(User.Identity.GetUserId())
+            : Guid.Empty;
 
         public async Task<ActionResult> Index()
         {
@@ -45,9 +51,13 @@ namespace WebTask.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public async Task<ActionResult> SendComment(int photoId, string text)
         {
             var name = User.Identity.Name;
+            text = htmlMessageFormat.Format(text).Trim();
+            if (text.IsEmpty())
+                throw new ArgumentException("string empty");
             var addCommentModel = await commentsAccess.AddComment(photoId, AuthorId, name, text);
             return Json(addCommentModel);
         }
