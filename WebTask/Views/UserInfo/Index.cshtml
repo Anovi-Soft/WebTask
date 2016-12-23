@@ -1,0 +1,28 @@
+﻿@using WebTask.Controllers.Format
+@model List<WebTask.DataAccess.UserSession>
+
+@{
+    ViewBag.Title = "UserInfo";
+}
+
+
+<table>
+<caption>Последние 10 посещений</caption>
+    <tr>
+        <th>Время</th>
+        <th>Ip</th>
+        <th>Путь</th>
+    </tr>
+@foreach (var session in Model)
+{
+    <tr>
+        <td>@session.Modify.TimeAgo()</td>
+        <td>@session.UserIp</td>
+        <td>@session.Path</td>
+    </tr>
+}
+</table>
+
+<div id="user_info_container"></div>
+
+@Scripts.Render("~/bundles/userinfo")

@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNet.Identity
+@model WebTask.Models.AlbumViewModel
+@{
+    ViewBag.Title = "Foto";
+    var commentModel = Model.Comments;
+    var allLikeModel = Model.AllLike;
+    var imageCount = commentModel.Comment.Count;
+    var jsStates = string.Join(", ", commentModel.States.Select(x => $"\"{x}\""));
+    var commentPattern = "<div id='{0}' class='comment' onclick=''><h2>{1}</h2><p>{2}</p>{3}</div>";
+    var buttonRemovePattern = "<input value='Удалить' type='button' onclick='removeComment(this)'>";
+    var id = User.Identity.GetUserId();
+    var userId = id == null ? Guid.Empty : Guid.Parse(id);
+}
+<div id="myModalBox" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <h2>
+                Если у вас появились вопросы,<br>напишите мне на почту.<br>
+                <br>Ps: она указана на главной странице.
+            </h2>
+        </div>
+    </div>
+</div>
+@for (var i = 0; i < imageCount; i++)
+{
+<div id="@($"pho{i}")" class="modal fade" tabindex="-1">
+    <a style="display: block; color: black" href="javascript:changeBg();">Сделать фотографию фоном</a>
+    <img src="@($"../img/{i}.jpg")" class="image">
+    <div id="@($"comments_box-{i}")">
+        @foreach (var comment in commentModel.Comment[i])
+        {
+            var button = userId == comment.AuthorId ? buttonRemovePattern : "";
+            @Html.Raw(string.Format(commentPattern, comment.Id, comment.Name, comment.Text, button))
+        }
+    </div>
+    <div>
+        @if (Request.IsAuthenticated)
+        {
+            <p>
+                Комментарий<Br>
+                <textarea id="@($"comments_text_input-{i}")" cols="40" rows="3"></textarea>
+            </p>
+            <p>
+                <input id="@($"comments_button_send-{i}")" type="button" onclick="sendComment(this)" value="Отправить">
+            </p>
+            <p>
+                <input id="@($"like_button_send-{i}")" type="button" onclick="changeLike(this)" value="@($"{(allLikeModel[i].IsMy ? "Disike" : "Like")}-{allLikeModel[i].Count}")">
+            </p>
+        }
+        else
+        {
+            <p>Для того, чтобы остовлять комментарии @Html.ActionLink("войдите", "Login", "Account") или @Html.ActionLink("зарегистрируйтесь", "Register", "Account")</p>
+        }
+    </div>
+</div>
+}
+<br><br><br>
+<ul class="photos">
+@for (var i = 0; i < imageCount; i++)
+{
+    <li><img src="@($"../img/mini/{i}.jpg")" onclick="@($"getImg({i})")"></li>
+}
+</ul>
+@Html.ActionLink("Скачать XML", "DownloadXml", "Photo");
+@Scripts.Render("~/bundles/foto")
+
+<script>
+    var commentsState = [@Html.Raw(jsStates)];
+    var commentPattern = "@Html.Raw(commentPattern)";
+    var userName = "@User.Identity.Name";
+    var userId = "@userId";
+    var buttonRemovePattern = "@Html.Raw(buttonRemovePattern)";
+</script>

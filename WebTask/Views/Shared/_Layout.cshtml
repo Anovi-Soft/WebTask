@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>@ViewBag.Title</title>
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/page.css" rel="stylesheet">
+    @*<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">*@
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top topnav">
+        <div class="container topnav">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand topnav">@Html.ActionLink("Главная", "Index", "Home")</div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <img alt="" src="@Url.Action("UsersCountExtended", "UserInfo")?path=@Request.Path" />
+                }
+                else
+                {
+                    <img alt="" src="@Url.Action("UsersCount", "UserInfo")" />
+                }
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Обо мне", "About", "Home")</li>
+                    <li>@Html.ActionLink("Галерея", "Index", "Photo")</li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink(User.Identity.Name, "Index", "UserInfo")</li>
+                        <li>@Html.ActionLink("Выход", "LogOff", "Account")</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Вход", "Login", "Account")</li>
+                        <li>@Html.ActionLink("Регистрация", "Register", "Account")</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/helper")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
