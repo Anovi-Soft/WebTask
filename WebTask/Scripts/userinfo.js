@@ -1,5 +1,5 @@
 ﻿function updateImageUserInfo() {
-    var url = 'UsersInfo/UsersInfo?width={0}&height={1}';
+    var url = 'UserInfo/UsersInfo?width={0}&height={1}';
     var w = window,
         d = document,
         e = d.documentElement,

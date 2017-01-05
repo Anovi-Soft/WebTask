@@ -15,14 +15,14 @@ namespace WebTask.Controllers.Format
                 return $"{shift.Minutes.FormatCount("минуту", "минуты", "минут")} назад";
             if (shift.Seconds > 5)
                 return $"{shift.Seconds.FormatCount("секунду", "секунды", "секунд")} назад";
-            return "только-что";
+            return "только что";
         }
 
         private static string FormatCount(this int number, string one, string many, string more)
         {
             if (number == 1)
                 return $"{one}";
-            switch (number)
+            switch (number % 10)
             {
                 case 1:
                     return $"{number} {one}";
